@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then
+    ./muontomo.e ../../data/muonSim6133.tom ../../data/6147.root
+    exit 0
+fi
+if [ $# -eq 1 ]; then
+    ./muontomo.e ../data/muonSim6133.tom $1
+    exit 0
+fi

@@ -1,0 +1,4 @@
+#!/bin/bash
+valgrind -v --leak-check=summary --track-origins=yes ./muontomo.e ../../data/muonSim6133.tom ../../data/6147.root 2> valgrind.log
+
+

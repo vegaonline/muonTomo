@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="rootPane" 
+            maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
+            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="tomography.MainMenuController">
+   <top>
+      <HBox prefHeight="33.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="rootsetParam" mnemonicParsing="false" onAction="#setParam" text="Set Parameter" />
+            <Button fx:id="rootVisualData" mnemonicParsing="false" onAction="#dataVis" text="Visualize Data" />
+            <Button fx:id="rootTomography" mnemonicParsing="false" onAction="#runTomo" text="Tomograph" />
+            <Button fx:id="rootQuit" mnemonicParsing="false" onAction="#exit2System" text="Quit" />
+         </children>
+      </HBox>
+   </top>
+</BorderPane>

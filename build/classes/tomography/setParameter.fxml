@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="setParamAnchor" prefHeight="422.0" prefWidth="631.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tomography.SetParameterController">
+    <stylesheets>
+        <URL value="@setparameter.css" />
+    </stylesheets>
+   <children>
+      <Label layoutX="14.0" layoutY="44.0" text="Shape of Detector">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="76.0" text="Dimension of Detector">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="24.0" layoutX="122.0" layoutY="40.0" stroke="BLACK" strokeType="INSIDE" width="22.0" />
+      <Line endX="-70.0" layoutX="361.0" layoutY="44.0" startX="-100.0" />
+      <Line endX="-105.0" endY="15.0" layoutX="361.0" layoutY="44.0" startX="-100.0" />
+      <Line endX="-95.0" endY="15.0" layoutX="391.0" layoutY="44.0" startX="-100.0" />
+      <Line endX="-60.0" layoutX="358.0" layoutY="59.0" startX="-100.0" />
+      <RadioButton fx:id="shapeRect" layoutX="153.0" layoutY="43.0" mnemonicParsing="false" text="Rectangle" />
+      <RadioButton fx:id="shapeTrapez" layoutX="300.0" layoutY="40.0" mnemonicParsing="false" text="Trapezoidal" />
+      <TextField fx:id="setParamdetSideA" layoutX="143.0" layoutY="73.0" prefHeight="16.0" prefWidth="50.0" promptText="SIDE A">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamdetSideB" layoutX="207.0" layoutY="74.0" prefHeight="16.0" prefWidth="50.0" promptText="SIDE B">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamdetSideC" layoutX="284.0" layoutY="74.0" prefHeight="16.0" prefWidth="50.0" promptText="SIDE C">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamdetSideD" layoutX="358.0" layoutY="74.0" prefHeight="16.0" prefWidth="50.0" promptText="SIDE D">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label fx:id="trapSegLab" layoutX="14.0" layoutY="105.0" text="Number of Segments for Trapezoidal">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetsegNum" layoutX="219.0" layoutY="102.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="14.0" layoutY="136.0" text="Total number of strips (/ segment)">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetstripNum" layoutX="219.0" layoutY="133.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamdetstripGap" layoutX="435.0" layoutY="133.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="284.0" layoutY="136.0" text="Spacing between strips">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="setParamLenUnit" layoutX="339.0" layoutY="9.0" prefWidth="150.0" promptText="Length UNIT" scaleX="0.7" scaleY="0.7" visibleRowCount="3" />
+      <ComboBox fx:id="setParamEnergyUnit" layoutX="451.0" layoutY="9.0" prefWidth="150.0" promptText="Energy UNIT" scaleX="0.7" scaleY="0.7" visibleRowCount="3" />
+      <Label fx:id="gapSegLab" layoutX="284.0" layoutY="106.0" text="Gap between segments">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetsegGap" layoutX="435.0" layoutY="102.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Button fx:id="setParamReset" layoutY="1.0" mnemonicParsing="false" onAction="#doReset" text="CLEAR">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Button>
+      <Button fx:id="setParamSave" layoutX="93.0" layoutY="1.0" mnemonicParsing="false" onAction="#doSaveParam" text="SAVE">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Button>
+      <Button fx:id="setParamLoad" layoutX="49.0" layoutY="1.0" mnemonicParsing="false" onAction="#doLoadOld" text="LOAD">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Button>
+      <Label layoutX="14.0" layoutY="166.0" text="Number of detectors above">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="196.0" text="Vertical Gap ">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetstripNumUP" layoutX="219.0" layoutY="163.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="284.0" layoutY="166.0" text="Number of detectors below">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetstripNumDN" layoutX="435.0" layoutY="163.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="14.0" layoutY="223.0" text="Size of the Object">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamObjLen" layoutX="118.0" layoutY="220.0" prefHeight="16.0" prefWidth="50.0" promptText="Length">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamObjwid" layoutX="182.0" layoutY="220.0" prefHeight="16.0" prefWidth="50.0" promptText="Breadth">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="setParamObjHt" layoutX="244.0" layoutY="220.0" prefHeight="16.0" prefWidth="50.0" promptText="Height">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="14.0" layoutY="251.0" text="Height of object from lower detector">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamObjLowDet" layoutX="219.0" layoutY="248.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <ImageView fx:id="detImage" cacheHint="SPEED" depthTest="ENABLE" fitHeight="114.0" fitWidth="132.0" layoutX="291.0" layoutY="270.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+         <viewport>
+            <Rectangle2D height="165.0" width="220.0" />
+         </viewport></ImageView>
+      <Label layoutX="14.0" layoutY="329.0" text="Data File">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="dataFileName" layoutX="118.0" layoutY="325.0" onMouseClicked="#getDataFileName" promptText="Select Data ROOT file">
+         <font>
+            <Font size="11.0" />
+         </font>
+      </TextField>
+      <Button fx:id="acceptParam" alignment="CENTER" contentDisplay="CENTER" layoutX="69.0" layoutY="386.0" mnemonicParsing="false" onAction="#doAccept" style="-fx-background-color: cyan;" text="Accept  It!" textAlignment="JUSTIFY" textFill="#2c5247" textOverrun="CENTER_ELLIPSIS">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Button>
+      <Label layoutX="186.0" layoutY="196.0" text="H0">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetGap0" layoutX="219.0" layoutY="193.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="284.0" layoutY="196.0" text="H1">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamdetGap1" layoutX="321.0" layoutY="193.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <ImageView fx:id="detImage1" cacheHint="SPEED" depthTest="ENABLE" fitHeight="114.0" fitWidth="132.0" layoutX="255.0" layoutY="307.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+         <viewport>
+            <Rectangle2D height="165.0" width="220.0" />
+         </viewport>
+      </ImageView>
+      <ImageView fx:id="detImage2" cacheHint="SPEED" depthTest="ENABLE" fitHeight="114.0" fitWidth="132.0" layoutX="460.0" layoutY="307.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+         <viewport>
+            <Rectangle2D height="165.0" width="220.0" />
+         </viewport>
+      </ImageView>
+      <Label layoutX="14.0" layoutY="278.0" text="No. of TDC used">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamTDCNum" layoutX="118.0" layoutY="275.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+      <Label layoutX="14.0" layoutY="301.0" text="No. of Active TDC">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Label>
+      <TextField fx:id="setParamTDCActiveNum" layoutX="118.0" layoutY="298.0" prefHeight="16.0" prefWidth="50.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </TextField>
+   </children>
+</AnchorPane>

@@ -1,0 +1,6 @@
+#!/bin/bash
+rm -rf CMake*
+rm -rf cmake*
+rm -rf Makefile
+rm -rf *.e
+rm -rf *.log
