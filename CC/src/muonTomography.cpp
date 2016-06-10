@@ -194,11 +194,30 @@ int main(int argc, char** argv)
     //******************** load ROOT libraries ***************
     setEnv();
 
-    //****************** Set the config file and data file Names **********
-    fixfilename(argc, argv, configFileName, dataFileName);
+    //************************* check whether editing a file is required **************
+    system("clear");
+    std::cout << "\n";
+    std::cout << " 1. Edit data file: \n";
+    std::cout << " 2. Run Simulation with default data\n\n";
+    std::cout << " Enter Choice: ";
+    int choice = 0;
+    while(choice < 1 || choice > 2) {
+        std::cin >> choice;
+    }
 
-    //******************* Read data Tree; *******************
-    myTree = getData(dataFileName);
+    if(choice == 1) {
+        dataFileName = "";
+        while(!dataFileName.Length()) {
+            std::cout << " Enter datafile name to be edited:-> ";
+            std::cin >> dataFileName;
+        }
+    }
+
+    //****************** Set the config file and data file Names **********
+    fixfilename(argc, argv, configFileName, dataFileName, choice);
+
+    //******************* Read data Tree; ******************
+    myTree = getData(dataFileName, choice);
     treeName = myTree->GetName();
     totEventNum = myTree->GetEntries();
 

@@ -211,7 +211,8 @@ void Hodoscope::genLeaves(TTree* myTree,
         Long64_t tentry = myTree->LoadTree(evt);
         myBranch->GetEntry(tentry);
         // Raman Sehgal, NPD, BARC helped me to get this loop working
-        // He told me use of SBA idea of LoadTree and GetEntry as I could not make it working.
+        // He told me use of SBA idea of LoadTree and GetEntry as I could
+        // not make it working without his advice.
     }
     std::cout << " Trigger data Loaded.... " << std::endl;
 

@@ -77,37 +77,49 @@ void strcpVega(std::string& s1, std::string s2)
         s1.push_back(s2[i]);
 }
 
-TTree* getData(TString fileName)
+TTree* getData(TString fileName, int choice)
 {
     TFile* file;
-    file = TFile::Open(fileName);
     TTree* fVolume;
+    if(choice == 1) {
+        file = TFile::Open(fileName, "UPDATE");
+    }
+    else {
+        file = TFile::Open(fileName);
+    }
 
     if(!file || file->IsZombie()) {
         std::cout << "Error: TFile :: Cannot open file " << fileName << std::endl;
     }
     else {
-        std::cout << " The Code has opened " << fileName << " successfully....." << std::endl;
+        std::cout << " The Code has opened " << fileName << " successfully....."
+                  << (choice == 1 ? " in  Edited mode " : "") << std::endl;
         TKey* rkey = (TKey*)file->GetListOfKeys()->First();
         fVolume = (TTree*)rkey->ReadObj();
         std::cout << "Root Data Tree " << fVolume->GetName()
                   << " loaded with total number of entries = " << fVolume->GetEntries() << std::endl;
     }
+
     return fVolume;
 }
 
-void fixfilename(int argc, char** argv, TString& configFileName, TString& dataFileName)
+void fixfilename(int argc, char** argv, TString& configFileName, TString& dataFileName, int choice)
 {
-    if(argc) {
-        if(argc < 3) {
-            exit(0);
-        }
-        else {
-            configFileName = argv[1];
-            dataFileName = argv[2];
-        }
+    if(choice == 1) {
+        configFileName = argv[1];
     }
     else {
-        exit(0);
+        if(argc) {
+            if(argc < 3) {
+                exit(0);
+            }
+            else {
+                configFileName = argv[1];
+                dataFileName = argv[2];
+            }
+        }
+        else {
+            exit(0);
+        }
     }
 }
