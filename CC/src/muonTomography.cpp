@@ -206,6 +206,8 @@ int main(int argc, char** argv)
     }
 
     if(choice == 1) {
+        std::cout << " PATH: ../../data/" << std::endl;
+        system("ls -l ../../data");
         dataFileName = "";
         while(!dataFileName.Length()) {
             std::cout << " Enter datafile name to be edited:-> ";
