@@ -9,14 +9,14 @@ MeV
 0.5   // gap between segments
 32    // Number of strips per segment
 0.2   // gap between strips
-1     // number of DET above object
-1     // number of DET below object
+3     // number of DET above object
+3     // number of DET below object
 0.0   // Length of the object
 0.0   // Width of the object
 0.0   // Height of the object
 0.0   // Gap between object and DET
 45.0  // Gap between bottom DET of upper and top DET of lower stack
-0.0   // Gap between each DET
+3.0   // Gap between each DET
 5     // Number of TDC used
 3    // Number of Active TDC
 /home/vega/NetBeansProjects/Tomography/data/6133.root

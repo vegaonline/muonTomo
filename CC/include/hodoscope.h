@@ -69,6 +69,7 @@ class Hodoscope {
     void get_tracks(std::vector<std::vector<double>>& dataMatrix, int NumDetectors, muonGroup& muons);
 };
 
+// *********************** Get data Entry from branch ******************
 Channel* Hodoscope::GetEntry(TTree* myTree, int i, int j, int event)
 {
     Channel* vpx = 0;
@@ -193,6 +194,7 @@ int Hodoscope::checkDataCount(int totEventNum, int NumDetectors, int startModule
     return countPlus;
 }
 
+// **********************************   Generate leaves ********************8
 void Hodoscope::genLeaves(TTree* myTree,
                           int numScintillator,
                           int NumDetectors,
@@ -248,7 +250,9 @@ void Hodoscope::genLeaves(TTree* myTree,
     myTree->ResetBranchAddresses();
 }
 
-void doConfig(TString& configFileName,
+// ********************* make configuration **********************88888
+void doConfig(int ch,
+              TString& configFileName,
               std::string& geoShape,
               std::string& enUnit,
               std::string& lenUnit,
@@ -323,6 +327,8 @@ void doConfig(TString& configFileName,
                 break;
             case 13:
                 stripsNumPerSeg = std::stoi(line, &sz);
+                if(ch)
+                    std::cout << " stripsNum/seg = " << stripsNumPerSeg << std::endl;
                 tot--;
                 break;
             case 12:
@@ -374,7 +380,7 @@ void doConfig(TString& configFileName,
         conFile.close();
     }
     else {
-        std::cout << "Unable to open file" << std::endl;
+        std::cout << "Unable to open file: " << configFileName << std::endl;
     }
 }
 

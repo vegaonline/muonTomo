@@ -9,7 +9,8 @@
 
 // using namespace std;
 
-void makeHodoscope(TString& configFileName,
+void makeHodoscope(int ch,
+                   TString& configFileName,
                    TTree* myTree,
                    Hodoscope& muonTomoScope,
                    int& NumDetectors,
@@ -48,12 +49,15 @@ void makeHodoscope(TString& configFileName,
                    int& offTDC)
 {
 
-    doConfig(configFileName, geoShape, enUnit, lenUnit, side1, side2, side3, side4, segNumPerDet, delSeg,
+    doConfig(ch, configFileName, geoShape, enUnit, lenUnit, side1, side2, side3, side4, segNumPerDet, delSeg,
              stripsNumPerSeg, delStrips, numDETabove, numDETbelow, delDETht0, delDETht1, objLen, objWid, objHt,
              delObjDET, numTDC, numActiveTDC);
 
     NumDetectors = numDETabove + numDETbelow;
     NumChannels = segNumPerDet * stripsNumPerSeg;
+
+    std::cout << "Number of detectors = " << NumDetectors << " Seg number / det " << segNumPerDet
+              << "  Number of channels = " << NumChannels << std::endl;
 
     muonTomoScope.scintSide1 = side1;
     muonTomoScope.scintSide2 = side2;
@@ -147,9 +151,11 @@ int main(int argc, char** argv)
 {
 
     TTree* myTree;
+    TTree* newTree;
     TString treeName = "";
     TString fileName = "";
     TString configFileName = "";
+    TString NewConf = "";
     TString dataFileName = "";
 
     int NumDetectors = 0;
@@ -217,19 +223,22 @@ int main(int argc, char** argv)
 
     //****************** Set the config file and data file Names **********
     fixfilename(argc, argv, configFileName, dataFileName, choice);
+    if(configFileName = "")
+        configFileName = "../../data/muonSim6133.tom";
 
     //******************* Read data Tree; ******************
-    myTree = getData(dataFileName, choice);
+    // myTree = getData(dataFileName, choice, );
+    getData(dataFileName, myTree); // reading original root file
     treeName = myTree->GetName();
     totEventNum = myTree->GetEntries();
 
     //****************** Set configuration **************************
     std::cout << " Construction of the Hodoscope begins........" << std::endl;
     Hodoscope muonTomoScope;
-    makeHodoscope(configFileName, myTree, muonTomoScope, NumDetectors, NumChannels, geoShape, enUnit, lenUnit, side1,
-                  side2, side3, side4, segNumPerDet, delSeg, stripsNumPerSeg, delStrips, numDETabove, numDETbelow,
-                  delDETht0, delDETht1, objLen, objWid, objHt, delObjDET, numTDC, numActiveTDC, numScintUP, numScintDN,
-                  scintSensorNum, numScintillator, totChannel, detChannelStart, stripLen, stripWid, stripHt,
+    makeHodoscope(choice, configFileName, myTree, muonTomoScope, NumDetectors, NumChannels, geoShape, enUnit, lenUnit,
+                  side1, side2, side3, side4, segNumPerDet, delSeg, stripsNumPerSeg, delStrips, numDETabove,
+                  numDETbelow, delDETht0, delDETht1, objLen, objWid, objHt, delObjDET, numTDC, numActiveTDC, numScintUP,
+                  numScintDN, scintSensorNum, numScintillator, totChannel, detChannelStart, stripLen, stripWid, stripHt,
                   startModuleNum, offTDC);
 
     std::cout << " Number of detectors = " << NumDetectors << " each having number of channels " << totChannel
@@ -243,6 +252,36 @@ int main(int argc, char** argv)
               << muonTomoScope.checkDataCount(totEventNum, NumDetectors, startModuleNum, offTDC, detChannelStart)
               << " \n Total valid Scintillator data " << muonTomoScope.checkScintCount(totEventNum, numScintillator)
               << std::endl;
+
+    // *********************** If ROOT file is edited do editing here ******************************
+    if(choice == 1) {
+        int NumDetN = 0;
+        int NumChanN = 0;
+        std::string geo = "";
+        std::string enU = "";
+        std::string lenU = "";
+        double s1 = 0.0, s2 = 0.0, s3 = 0.0, s4 = 0.0, delSegN = 0.0, delSN = 0.0;
+        double delH0 = 0.0, delH1 = 0.0, oL = 0.0, oW = 0.0, oH = 0.0, DobjDet = 0.0;
+        int segN = 0, stripsN = 0, detU = 0, detD = 0, nTDC = 0, nATDC = 0;
+        int nScintU = 0, nScintD = 0, scintSN = 0, scintNumN = 0, totC = 0;
+        int detC0 = 0, modu0 = 0, TDCoff = 0;
+        double stripL = 0.0, stripW = 0.0, stripH = 0.0;
+
+        TFile* file;
+        NewConf = "../../data/NEWmuonSim6147.tom";
+        TString fName_tmp = dataFileName;
+        TString fileNameNew = fName_tmp.Replace(dataFileName.Length() - 5, 6, "_NEW.root");
+        file = new TFile(fileNameNew, "RECREATE");
+        std::cout << " \n ---> Generating a new hodoscope for testing...." << std::endl;
+        Hodoscope newTomoScope;
+        makeHodoscope(choice, NewConf, newTree, newTomoScope, NumDetN, NumChanN, geo, enU, lenU, s1, s2, s3, s4, segN,
+                      delSegN, stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC, nScintU,
+                      nScintD, scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff);
+
+        std::cout << " Number of detectors = " << NumDetN << " each having number of channels " << totC << " where "
+                  << NumChanN << " are active from  Channel #" << detC0 << "." << std::endl;
+        exit(0);
+    }
 
     //********************* Assign X, Y, Z, Theta, Phi, T  for each data point ***********************
     muonTomoScope.assignXYZ(totEventNum, NumDetectors, startModuleNum, offTDC, detChannelStart, DataMatrix);
