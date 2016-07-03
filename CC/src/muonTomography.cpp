@@ -11,7 +11,7 @@
 
 void makeHodoscope ( int ch,
                      TString& configFileName,
-                     TTree* myTree,
+
                      Hodoscope& muonTomoScope,
                      int& NumDetectors,
                      int& NumChannels,
@@ -152,7 +152,7 @@ void genNewData ( int choice,
                   Hodoscope& mt,
                   int totData,
                   TString dataFileName,
-                  TTree* newTree,
+
                   int& NumDetN,
                   int& NumChanN,
                   std::string geo,
@@ -197,12 +197,20 @@ void genNewData ( int choice,
 
     std::cout << " \n ---> Generating a new hodoscope for testing...." << std::endl;
     Hodoscope newTomoScope;
-    makeHodoscope ( choice, NewConf, newTree, newTomoScope, NumDetN, NumChanN, geo, enU, lenU, s1, s2, s3, s4, segN,
-                    delSegN, stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC, nScintU,
-                    nScintD, scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff );
+    makeHodoscope ( choice, NewConf, newTomoScope, NumDetN, NumChanN, geo, enU, lenU, s1, s2, s3, s4, segN, delSegN,
+                    stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC, nScintU, nScintD,
+                    scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff );
 
     std::cout << " Number of detectors = " << NumDetN << " each having number of channels " << totC << " where "
               << NumChanN << " are active from  Channel #" << detC0 << "." << std::endl;
+
+    // ******** Now prepare the tree structure for the new file *********************
+    TTree* newTree = new TTree ( "newTree", "BSC_DATA_TREE" );
+    std::cout << newTomoScope.Trigger.trigger[0].channelName << std::endl;
+    for ( int ii = 0; ii < totData; ii++ ) {
+        // newTree->Branch ( newTomoScope.Trigger.trigger[0].channelName, &newTomoScope.Trigger.trigger[0].sensorVal );
+    }
+
     std::cout << "....... Generating Numbers ..........." << std::endl;
 
     int numEnt = 0;
@@ -257,6 +265,7 @@ void genNewData ( int choice,
               << "  Min Scint = " << scintMin << "  Max Scint = " << scintMax
               << "  Mean Scintilator data = " << scintMean << "  Max Det = " << sigMax << "  Min Sig = " << sigMin
               << " Mean detector data = " << sigMean << std::endl;
+
     // ********* Preparing to fill data for new Tomoscope *****
 
     int range = trigMax - trigMin;
@@ -267,7 +276,7 @@ void genNewData ( int choice,
         while ( mydata < trigMin || mydata > trigMax ) {
             mydata = distTrig ( e2 );
         }
-        *newTomoScope.Trigger.trigger[ii].sensorVal = &mydata;
+        //*newTomoScope.Trigger.trigger[ii].sensorVal = &mydata;
         trigMean += mydata;
     }
     std::cout << "size = " << mt.Trigger.trigger[0].sensorVal->size () << std::endl;
@@ -283,7 +292,7 @@ int main ( int argc, char** argv )
 {
 
     TTree* myTree;
-    TTree* newTree;
+
     TString treeName = "";
     TString fileName = "";
     TString configFileName = "";
@@ -366,11 +375,11 @@ int main ( int argc, char** argv )
     //****************** Set configuration **************************
     std::cout << " Construction of the Hodoscope begins........" << std::endl;
     Hodoscope muonTomoScope;
-    makeHodoscope ( choice, configFileName, myTree, muonTomoScope, NumDetectors, NumChannels, geoShape, enUnit, lenUnit,
-                    side1, side2, side3, side4, segNumPerDet, delSeg, stripsNumPerSeg, delStrips, numDETabove,
-                    numDETbelow, delDETht0, delDETht1, objLen, objWid, objHt, delObjDET, numTDC, numActiveTDC,
-                    numScintUP, numScintDN, scintSensorNum, numScintillator, totChannel, detChannelStart, stripLen,
-                    stripWid, stripHt, startModuleNum, offTDC );
+    makeHodoscope ( choice, configFileName, muonTomoScope, NumDetectors, NumChannels, geoShape, enUnit, lenUnit, side1,
+                    side2, side3, side4, segNumPerDet, delSeg, stripsNumPerSeg, delStrips, numDETabove, numDETbelow,
+                    delDETht0, delDETht1, objLen, objWid, objHt, delObjDET, numTDC, numActiveTDC, numScintUP,
+                    numScintDN, scintSensorNum, numScintillator, totChannel, detChannelStart, stripLen, stripWid,
+                    stripHt, startModuleNum, offTDC );
 
     std::cout << " Number of detectors = " << NumDetectors << " each having number of channels " << totChannel
               << " where " << NumChannels << " are active from  Channel #" << detChannelStart << "." << std::endl;
@@ -398,9 +407,9 @@ int main ( int argc, char** argv )
         int detC0 = detChannelStart, modu0 = startModuleNum, TDCoff = offTDC;
         double stripL = 0.0, stripW = 0.0, stripH = 0.0;
         int totData = myTree->GetEntries ();
-        genNewData ( choice, muonTomoScope, totData, dataFileName, newTree, NumDetN, NumChanN, geo, enU, lenU, s1, s2,
-                     s3, s4, segN, delSegN, stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC,
-                     nScintU, nScintD, scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff );
+        genNewData ( choice, muonTomoScope, totData, dataFileName, NumDetN, NumChanN, geo, enU, lenU, s1, s2, s3, s4,
+                     segN, delSegN, stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC, nScintU,
+                     nScintD, scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff );
     }
 
     //********************* Assign X, Y, Z, Theta, Phi, T  for each data point ***********************
