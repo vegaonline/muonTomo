@@ -35,27 +35,25 @@
 #include <TCanvas.h>
 #include <TStyle.h>
 
-#define x2( x ) ( x * x )
-#define x3( x ) ( x2 * x )
+#define x2(x) (x * x)
+#define x3(x) (x2 * x)
 
 std::random_device rd;
-unsigned seedRD = std::chrono::system_clock::now ().time_since_epoch ().count ();
-std::mt19937_64 e2 ( seedRD );
+unsigned seedRD = std::chrono::system_clock::now().time_since_epoch().count();
+std::mt19937_64 e2(seedRD);
 
 class TFile;
 class TGeoVolume;
 
-class point3D
-{
+class point3D {
   public:
     double x, y, z;
 };
 
-class line3D
-{
+class line3D {
   public:
     point3D P1, P2;
-    double len2 = x2 ( P2.x - P1.x ) + x2 ( P2.y - P1.y ) + x2 ( P2.z - P1.z );
+    double len2 = x2(P2.x - P1.x) + x2(P2.y - P1.y) + x2(P2.z - P1.z);
 };
 
 TString blow = "b_";
@@ -70,79 +68,58 @@ typedef std::vector<Channel> Module;
 typedef std::vector<Module> RPClist;
 typedef std::vector<Channel> Scint;
 
-void setEnv ( void )
+void setEnv(void)
 {
-    gROOT->Reset ();
-    gSystem->Load ( "libRIO" );
-    gSystem->Load ( "libGeom" );
-    gSystem->Load ( "libHist" );
-    gSystem->Load ( "libGraf" );
-    gSystem->Load ( "libMathMore" );
+    gROOT->Reset();
+    gSystem->Load("libRIO");
+    gSystem->Load("libGeom");
+    gSystem->Load("libHist");
+    gSystem->Load("libGraf");
+    gSystem->Load("libMathMore");
 }
 
-void strcpVega ( std::string& s1, std::string s2 )
+void strcpVega(std::string& s1, std::string s2)
 {
-    for ( int i = 0; i < s2.size (); i++ ) s1.push_back ( s2[i] );
+    for(int i = 0; i < s2.size(); i++)
+        s1.push_back(s2[i]);
 }
 
-double rand_normal ( double mean, double stddev, double start, double end )
-{ // Box muller method
-    static double n2 = 0.0;
-    static int n2_cached = 0;
-    if ( !n2_cached ) {
-        double x, y, r;
-        do {
-            x = 2.0 * rand () / RAND_MAX - 1;
-            y = 2.0 * rand () / RAND_MAX - 1;
-
-            r = x * x + y * y;
-        } while ( r == 0.0 || r > 1.0 );
-        {
-            double d = sqrt ( -2.0 * log ( r ) / r );
-            double n1 = x * d;
-            n2 = y * d;
-            double result = n1 * stddev + mean;
-            n2_cached = 1;
-            return result;
-        }
-    } else {
-        n2_cached = 0;
-        return n2 * stddev + mean;
-    }
-}
-
-void getData ( TString fileName, TTree*& tree1 )
+void getData(TString fileName, TTree*& tree1)
 {
     TFile* file;
-    file = TFile::Open ( fileName );
+    file = TFile::Open(fileName);
 
-    if ( !file || file->IsZombie () ) {
+    if(!file || file->IsZombie()) {
         std::cout << "Error: TFile :: Cannot open file " << fileName << std::endl;
         std::cout << "Quitting the system........" << std::endl;
-        exit ( 0 );
-    } else if ( file ) {
+        exit(0);
+    }
+    else if(file) {
         std::cout << " The Code has opened " << fileName << " successfully....." << std::endl;
-        TKey* rkey = (TKey*)file->GetListOfKeys ()->First ();
-        tree1 = (TTree*)rkey->ReadObj ();
-        std::cout << "Root Data Tree " << tree1->GetName ()
-                  << " loaded with total number of entries = " << tree1->GetEntries () << std::endl;
+        TKey* rkey = (TKey*)file->GetListOfKeys()->First();
+        tree1 = (TTree*)rkey->ReadObj();
+        std::cout << "Root Data Tree " << tree1->GetName()
+                  << " loaded with total number of entries = " << tree1->GetEntries() << std::endl;
     }
 }
 
-void fixfilename ( int argc, char** argv, TString& configFileName, TString& dataFileName, int choice )
+void fixfilename(int argc, char** argv, TString& configFileName, TString& dataFileName, int choice)
 {
-    if ( choice == 1 ) {
+    if(choice == 1) {
         configFileName = argv[1];
-    } else {
-        if ( argc ) {
-            if ( argc < 3 ) {
-                exit ( 0 );
-            } else {
+    }
+    else {
+        if(argc) {
+            if(argc < 3) {
+                exit(0);
+            }
+            else {
                 configFileName = argv[1];
                 dataFileName = argv[2];
             }
-        } else {
-            exit ( 0 );
+        }
+        else {
+            exit(0);
         }
     }
 }

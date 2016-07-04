@@ -20,7 +20,7 @@ include_directories(${ROOT_INCLUDE_DIRS})
 include_directories(${MUONTOMO_SOURCE_DIR}/include)
 include_directories(${MUONTOMO_SOURCE_DIR}/src)
 
-set(LIBS ${ROOT_LIBRARY_DIR}//libCore.so ${ROOT_LIBRARY_DIR}/libRIO.so ${ROOT_LIBRARY_DIR}/libGeom.so ${ROOT_LIBRARY_DIR}/libGraf.so ${ROOT_LIBRARY_DIR}/libGpad.so ${ROOT_LIBRARY_DIR}/libHist.so ${ROOT_LIBRARY_DIR}/libEG.so ${ROOT_LIBRARY_DIR}/libPhysics.so ${ROOT_LIBRARY_DIR}/libMathMore.so)
+set(LIBS ${ROOT_LIBRARY_DIR}//libCore.so ${ROOT_LIBRARY_DIR}/libRIO.so ${ROOT_LIBRARY_DIR}/libGeom.so ${ROOT_LIBRARY_DIR}/libGraf.so ${ROOT_LIBRARY_DIR}/libGpad.so ${ROOT_LIBRARY_DIR}/libHist.so ${ROOT_LIBRARY_DIR}/libEG.so ${ROOT_LIBRARY_DIR}/libPhysics.so ${ROOT_LIBRARY_DIR}/libMathMore.so ${ROOT_LIBRARY_DIR}/libTree.so)
 
 set (exec_INCS  ${MUONTOMO_SOURCE_DIR}/include/base.h ${MUONTOMO_SOURCE_DIR}/include/hodoscope.h ${MUONTOMO_SOURCE_DIR}/include/muon.h ${MUONTOMO_SOURCE_DIR}/include/sensor.h)
 
