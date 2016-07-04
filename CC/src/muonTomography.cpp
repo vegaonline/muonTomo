@@ -272,27 +272,26 @@ void genNewData ( int choice,
 
     TTree* newTree = new TTree ( "newTree", "testing" ); // BSC_DATA_TREE");
 
+    std::normal_distribution<> distTrig ( trigMean, 0.1 * trigMean );
+    std::normal_distribution<> distScint ( scintMean, 0.1 * scintMean );
+    std::normal_distribution<> distSig ( sigMean, 0.2 * sigMean );
+
+    // scintMean = 0.0, trigMean = 0.0,
+    sigMean = 0.0;
+
     // ****** for trigger *******
     int range = trigMax - trigMin;
-    std::normal_distribution<> distTrig ( trigMean, 0.5 * trigMean );
 
-    trigMean = 0.0;
     std::cout << " starting to create new tree.. " << std::endl;
+    Int_t mydata = 0;
 
-    scintMean = 0.0, trigMean = 0.0, sigMean = 0.0;
-    scintMax = -9999999, trigMax = scintMax, sigMax = scintMax;
-    scintMin = 99999999, trigMin = scintMin, sigMin = scintMin;
-
-    std::cout << "total data = " << totData << std::endl;
     for ( int ii = 0; ii < totData; ii++ ) {
-        Int_t mydata = 0;
+        mydata = 0;
         while ( mydata < trigMin || mydata > trigMax ) {
             mydata = distTrig ( e2 );
         }
         trigMean += 1.0 * mydata;
-        trigMin = std::min ( trigMin, mydata );
-        trigMax = std::max ( trigMax, mydata );
-        std::cout << ii << "  " << mydata << std::endl;
+        //         std::cout << ii << "  " << mydata << std::endl;
         newTree->Branch ( newTomoScope.Trigger.trigger[0].channelName.c_str (), &mydata, "mydata/F" );
     }
     trigMean /= totData;
@@ -300,21 +299,20 @@ void genNewData ( int choice,
 
     // ****** for scintillator *******
     range = scintMax - scintMin;
-    std::normal_distribution<> distScint ( scintMean, 0.5 * scintMean );
+
     scintMean = 0;
     for ( int ii = 0; ii < totData; ii++ ) {
         for ( int scI = 0; scI < ( scintNumN - 1 ); scI++ ) {
             for ( int j1 = ( scI * scintSN ); j1 < ( scI * scintSN + scintSN ); j1++ ) {
                 int j = j1 - scI * scintSN;
-                Int_t mydata = 0;
+                mydata = 0;
                 while ( mydata < scintMin || mydata > scintMax ) {
                     mydata = distScint ( e2 );
                 }
+                // std::cout << ii << "  " << scI << "  " << j << "   " << mydata << std::endl;
                 newTree->Branch ( newTomoScope.ScintillatorArray[scI].scintill[j].channelName.c_str (), &mydata,
                                   "mydata/F" );
                 scintMean += mydata;
-                scintMin = std::min ( scintMin, mydata );
-                scintMax = std::max ( scintMax, mydata );
             }
         }
     }
@@ -322,22 +320,20 @@ void genNewData ( int choice,
 
     // ********* for detector *******
     range = sigMax - sigMin;
-    std::normal_distribution<> distSig ( sigMean, 0.5 * sigMean );
+
     sigMean = 0.0;
 
     for ( int ii = 0; ii < totData; ii++ ) {
         for ( int i = 0; i < NumDetN; i++ ) {
             int idet = modu0 + TDCoff + i;
             for ( int j = detC0; j < ( detC0 + totC ); j++ ) {
-                Int_t mydata = 0;
+                mydata = 0;
                 while ( mydata < sigMin || mydata > sigMax ) {
                     mydata = distSig ( e2 );
                 }
                 newTree->Branch ( newTomoScope.detectorArray[idet].stripLine[j].channelName.c_str (), &mydata,
                                   "mydata/F" );
                 sigMean += mydata;
-                sigMax = std::max ( sigMax, mydata );
-                sigMin = std::min ( sigMin, mydata );
             }
         }
     }
