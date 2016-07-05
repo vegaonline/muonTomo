@@ -193,7 +193,7 @@ void genNewData(int choice,
     TString NewConf = "../../data/NEWmuonSim6147.tom";
     TString fName_tmp = dataFileName;
     TString fileNameNew = fName_tmp.Replace(dataFileName.Length() - 5, 6, "_NEW.root");
-    file = new TFile(fileNameNew, "RECREATE");
+    file = new TFile(fileNameNew, "NEW");
 
     std::cout << " \n ---> Generating a new hodoscope for testing...." << std::endl;
     Hodoscope newTomoScope;
@@ -285,6 +285,7 @@ void genNewData(int choice,
     std::cout << " starting to create new tree.. " << std::endl;
     Int_t mydata = 0;
     cnt = 0;
+    TBranch* myBranchTrig;
     for(int ii = 0; ii < totData; ii++) {
         mydata = 0;
         while(mydata < trigMin || mydata > trigMax) {
@@ -293,12 +294,14 @@ void genNewData(int choice,
         trigMean += 1.0 * mydata;
         cnt++;
         //         std::cout << ii << "  " << mydata << std::endl;
-        newTree->Branch(newTomoScope.Trigger.trigger[0].channelName.c_str(), &mydata, "mydata/F");
+        myBranchTrig = newTree->Branch(newTomoScope.Trigger.trigger[0].channelName.c_str(), &mydata, "mydata/F");
     }
     trigMean /= (cnt - 1);
     std::cout << " Trigger data added in new file  Tree with mean = " << trigMean << std::endl;
+    myBranchTrig->SetFile(file);
 
     // ****** for scintillator *******
+    TBranch* myBranchScint;
     range = scintMax - scintMin;
     cnt = 0;
     for(int ii = 0; ii < totData; ii++) {
@@ -312,18 +315,18 @@ void genNewData(int choice,
                 scintMean += mydata;
                 cnt++;
                 // std::cout << ii << "  " << scI << "  " << j << "   " << mydata << std::endl;
-                newTree->Branch(newTomoScope.ScintillatorArray[scI].scintill[j].channelName.c_str(), &mydata,
-                                "mydata/F");
+                myBranchScint = newTree->Branch(newTomoScope.ScintillatorArray[scI].scintill[j].channelName.c_str(),
+                                                &mydata, "mydata/F");
             }
         }
     }
     scintMean /= (cnt - 1);
     std::cout << " Scintillation data added in new file Tree with mean = " << scintMean << std::endl;
-
+    myBranchScint->SetFile(file);
     // ********* for detector *******
     range = sigMax - sigMin;
     cnt = 0;
-
+    TBranch* myBranchSig;
     for(int ii = 0; ii < totData; ii++) {
         for(int i = 0; i < NumDetN; i++) {
             int idet = modu0 + TDCoff + i;
@@ -334,16 +337,21 @@ void genNewData(int choice,
                 }
                 sigMean += mydata;
                 cnt++;
-                std::cout << ii << "   " << idet << "   " << j << "  " << mydata << std::endl;
-                newTree->Branch(newTomoScope.detectorArray[idet].stripLine[j].channelName.c_str(), &mydata, "mydata/F");
+                // std::cout << ii << "   " << idet << "   " << j << "  " << mydata << std::endl;
+                myBranchSig = newTree->Branch(newTomoScope.detectorArray[idet].stripLine[j].channelName.c_str(),
+                                              &mydata, "mydata/F");
             }
         }
     }
     sigMean /= (cnt - 1);
     std::cout << " Detector data added in the new file Tree with mean = " << sigMean << std::endl;
-
-    newTree->Fill();
+    myBranchSig->SetFile(file);
+    /*
+        newTree->Fill();
+         */
+    file->Write();
     file->Close();
+
     exit(0);
 }
 
