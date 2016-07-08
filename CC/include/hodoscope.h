@@ -67,12 +67,21 @@ class Hodoscope {
     Channel* GetEntry(TTree* myTree, int i, int j, int event);
     int checkDataCount(int totEventNum, int NumDetectors, int startModuleNum, int offTDC, int detChannelStart);
     int checkScintCount(int totEventNum, int numScintillator);
-    void assignXYZ(int totEventNum,
+    void assignXYZ(int choice,
+                   int totEventNum,
                    int NumDetectors,
                    int startModuleNum,
                    int offTDC,
                    int detChannelStart,
-                   // std::vector<std::vector<std::vector<std::vector<double>>>>& dataMatrix);
+                   double scintMean,
+                   double trigMean,
+                   double sigMean,
+                   int scintMax,
+                   int trigMax,
+                   int sigMax,
+                   int scintMin,
+                   int trigMin,
+                   int sigMin,
                    std::vector<std::vector<double>>& dataMatrix);
     void get_tracks(std::vector<std::vector<double>>& dataMatrix, int NumDetectors, muonGroup& muons);
 };
@@ -144,33 +153,49 @@ void Hodoscope::get_tracks(std::vector<std::vector<double>>& dataMatrix, int Num
 }
 
 //******************** Assign X, Y, Z, Theta, Phi, T for detectors ************************
-void Hodoscope::assignXYZ(int totEventNum,
+
+void Hodoscope::assignXYZ(int choice,
+                          int totEventNum,
                           int NumDetectors,
                           int startModuleNum,
                           int offTDC,
                           int detChannelStart,
+                          double scintMean,
+                          double trigMean,
+                          double sigMean,
+                          int scintMax,
+                          int trigMax,
+                          int sigMax,
+                          int scintMin,
+                          int trigMin,
+                          int sigMin,
                           std::vector<std::vector<double>>& dataMatrix)
 {
     // event module channel x y z time, row = totEventNum * NumDetectors * delEleNumX, col = 7
     unsigned int cnt = 0;
-    for(int evt = 0; evt < totEventNum; evt++) {
-        for(int i1 = 0; i1 < NumDetectors; i1++) {
-            int idet = startModuleNum + offTDC + i1;
-            for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
-                if(detectorArray[idet].stripLine[j].sensorVal->size()) {
-                    dataMatrix.push_back(std::vector<double>());
-                    dataMatrix[cnt].push_back(evt);
-                    dataMatrix[cnt].push_back(idet);
-                    dataMatrix[cnt].push_back(j);
-                    double xx = (j - detChannelStart) * detectorArray[idet].stripLine[j].length / (double)detEleNumX;
-                    dataMatrix[cnt].push_back(xx); // X
-                    xx = 0.0;
-                    dataMatrix[cnt].push_back(xx); // Y
-                    xx = (i1 < numDetUP) ? i1 * det2detGap : topbotDetGap + (i1 - 1) * det2detGap;
-                    dataMatrix[cnt].push_back(xx); // Z
-                    int time = detectorArray[idet].stripLine[j].sensorVal->at(0);
-                    dataMatrix[cnt].push_back((double)time);
-                    cnt++;
+    if(choice == 1) {
+    }
+    else if(choice == 2) {
+        for(int evt = 0; evt < totEventNum; evt++) {
+            for(int i1 = 0; i1 < NumDetectors; i1++) {
+                int idet = startModuleNum + offTDC + i1;
+                for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
+                    if(detectorArray[idet].stripLine[j].sensorVal->size()) {
+                        dataMatrix.push_back(std::vector<double>());
+                        dataMatrix[cnt].push_back(evt);
+                        dataMatrix[cnt].push_back(idet);
+                        dataMatrix[cnt].push_back(j);
+                        double xx =
+                            (j - detChannelStart) * detectorArray[idet].stripLine[j].length / (double)detEleNumX;
+                        dataMatrix[cnt].push_back(xx); // X
+                        xx = 0.0;
+                        dataMatrix[cnt].push_back(xx); // Y
+                        xx = (i1 < numDetUP) ? i1 * det2detGap : topbotDetGap + (i1 - 1) * det2detGap;
+                        dataMatrix[cnt].push_back(xx); // Z
+                        int time = detectorArray[idet].stripLine[j].sensorVal->at(0);
+                        dataMatrix[cnt].push_back((double)time);
+                        cnt++;
+                    }
                 }
             }
         }
