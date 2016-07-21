@@ -69,19 +69,18 @@ class Hodoscope {
     int checkScintCount(int totEventNum, int numScintillator);
     void assignXYZ(int choice,
                    int totEventNum,
-                   int NumDetectors,
+                   int NumDetO,
+                   int NumDetNew,
+                   int nChan,
                    int startModuleNum,
                    int offTDC,
                    int detChannelStart,
-                   double scintMean,
-                   double trigMean,
                    double sigMean,
-                   int scintMax,
-                   int trigMax,
                    int sigMax,
-                   int scintMin,
-                   int trigMin,
                    int sigMin,
+                   double d1,
+                   double d0,
+                   int detU,
                    std::vector<std::vector<double>>& dataMatrix);
     void get_tracks(std::vector<std::vector<double>>& dataMatrix, int NumDetectors, muonGroup& muons);
 };
@@ -156,28 +155,78 @@ void Hodoscope::get_tracks(std::vector<std::vector<double>>& dataMatrix, int Num
 
 void Hodoscope::assignXYZ(int choice,
                           int totEventNum,
-                          int NumDetectors,
+                          int NumDetO,
+                          int NumDetNew,
+                          int nChan,
                           int startModuleNum,
                           int offTDC,
                           int detChannelStart,
-                          double scintMean,
-                          double trigMean,
                           double sigMean,
-                          int scintMax,
-                          int trigMax,
                           int sigMax,
-                          int scintMin,
-                          int trigMin,
                           int sigMin,
+                          double d1,
+                          double d0,
+                          int detU,
                           std::vector<std::vector<double>>& dataMatrix)
 {
     // event module channel x y z time, row = totEventNum * NumDetectors * delEleNumX, col = 7
     unsigned int cnt = 0;
     if(choice == 1) {
+        std::normal_distribution<> distSig(sigMean, 0.2 * sigMean);
+
+        int iflag = 0;
+        int c1 = startModuleNum + offTDC;
+        double sLen = detectorArray[c1].stripLine[detChannelStart].length;
+        int icheck = startModuleNum + offTDC + (NumDetO - 1);
+        for(int evt = 0; evt < totEventNum; evt++) {
+            for(int i1 = 0; i1 < NumDetNew; i1++) {
+                int idet = startModuleNum + offTDC + i1;
+                iflag = (idet > icheck) ? 1 : 0;
+                if(!idet) {
+                    for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
+                        if(detectorArray[idet].stripLine[j].sensorVal->size()) {
+                            dataMatrix.push_back(std::vector<double>());
+                            dataMatrix[cnt].push_back(evt);
+                            dataMatrix[cnt].push_back(idet);
+                            dataMatrix[cnt].push_back(j);
+                            double xx = (j - detChannelStart) * sLen / (double)detEleNumX;
+                            dataMatrix[cnt].push_back(xx); // X
+                            xx = 0.0;
+                            dataMatrix[cnt].push_back(xx); // Y
+                            xx = (i1 < numDetUP) ? i1 * d1 : d0 + (i1 - 1) * d1;
+                            dataMatrix[cnt].push_back(xx); // Z
+                            int time = detectorArray[idet].stripLine[j].sensorVal->at(0);
+                            dataMatrix[cnt].push_back((double)time);
+                            cnt++;
+                        }
+                    }
+                }
+                else {
+                    for(int j = detChannelStart; j < detChannelStart + nChan; j++) { // detEleNumX change
+                        dataMatrix.push_back(std::vector<double>());
+                        dataMatrix[cnt].push_back(evt);
+                        dataMatrix[cnt].push_back(idet);
+                        dataMatrix[cnt].push_back(j);
+                        double xx = (j - detChannelStart) * sLen / (double)nChan;
+                        dataMatrix[cnt].push_back(xx); // X
+                        xx = 0.0;
+                        dataMatrix[cnt].push_back(xx); // Y
+                        xx = (i1 < detU) ? i1 * d1 : d0 + (i1 - 1) * d1;
+                        dataMatrix[cnt].push_back(xx); // Z
+                        int time = 0;
+                        while(time < sigMin || time > sigMax) {
+                            time = distSig(e2);
+                        }
+                        dataMatrix[cnt].push_back((double)time);
+                        cnt++;
+                    }
+                }
+            }
+        }
     }
     else if(choice == 2) {
         for(int evt = 0; evt < totEventNum; evt++) {
-            for(int i1 = 0; i1 < NumDetectors; i1++) {
+            for(int i1 = 0; i1 < NumDetNew; i1++) {
                 int idet = startModuleNum + offTDC + i1;
                 for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
                     if(detectorArray[idet].stripLine[j].sensorVal->size()) {
@@ -409,6 +458,7 @@ void doConfig(int ch,
                 break;
             }
         }
+        std::cout << " Configuration file " << configFileName << "  loaded." << std::endl;
         conFile.close();
     }
     else {

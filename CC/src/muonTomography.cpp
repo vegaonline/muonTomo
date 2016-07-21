@@ -7,11 +7,8 @@
 
 #include "hodoscope.h"
 
-// using namespace std;
-
 void makeHodoscope(int ch,
                    TString& configFileName,
-
                    Hodoscope& muonTomoScope,
                    int& NumDetectors,
                    int& NumChannels,
@@ -372,6 +369,83 @@ void genNewData(int choice,
     // exit(0);
 }
 
+void getStats(Hodoscope& mt,
+              int totData,
+              int& trigMax,
+              int& trigMin,
+              double& trigMean,
+              int scintSN,
+              int scintNumN,
+              int& scintMin,
+              int& scintMax,
+              double& scintMean,
+              int modu0,
+              int TDCoff,
+              int totDet,
+              int detC0,
+              int& sigMin,
+              int& sigMax,
+              double& sigMean)
+{
+    trigMin = 999999;
+    scintMin = trigMin;
+    sigMin = trigMin;
+    trigMax = -trigMin;
+    scintMax = trigMax;
+    sigMax = trigMax;
+    trigMean = 0.0;
+    scintMean = 0.0;
+    sigMean = 0.0;
+
+    // Determine trigger stats
+    int cnt = 0;
+    for(int ii = 0; ii < totData; ii++) {
+        int mydata = mt.Trigger.trigger[0].sensorVal->at(0);
+        trigMean += 1.0 * mydata;
+        trigMin = std::min(trigMin, mydata);
+        trigMax = std::max(trigMax, mydata);
+        cnt++;
+    }
+    trigMean /= (cnt - 1);
+    cnt = 0;
+
+    // Determine scintillator stats
+    for(int ii = 0; ii < totData; ii++) {
+        for(int scintI = 0; scintI < (scintNumN - 1); scintI++) {
+            for(int j1 = (scintI * scintSN); j1 < (scintI * scintSN + scintSN); j1++) {
+                int j = j1 - scintI * scintSN;
+                int mydata = 0;
+                if(mt.ScintillatorArray[scintI].scintill[j].sensorVal->size()) {
+                    mydata = mt.ScintillatorArray[scintI].scintill[j].sensorVal->at(0);
+                    scintMean += 1.0 * mydata;
+                    scintMax = std::max(scintMax, mydata);
+                    scintMin = std::min(scintMin, mydata);
+                    cnt++;
+                }
+            }
+        }
+    }
+    scintMean /= (cnt - 1);
+    cnt = 0;
+
+    // Determine Detector stats
+    for(int ii = 0; ii < totData; ii++) {
+        for(int i1 = 0; i1 < totDet; i1++) {
+            int idet = modu0 + TDCoff + i1;
+            for(int j = detC0; j < (detC0 + mt.detEleNumX); j++) {
+                if(mt.detectorArray[idet].stripLine[j].sensorVal->size()) {
+                    int mydata = mt.detectorArray[idet].stripLine[j].sensorVal->at(0);
+                    sigMean += 1.0 * mydata;
+                    sigMax = std::max(sigMax, mydata);
+                    sigMin = std::min(sigMin, mydata);
+                    cnt++;
+                }
+            }
+        }
+    }
+    sigMean /= (cnt - 1);
+}
+
 /*
  * This is main code for processing MuonTomography ROOT Data
  * obtained from RPC
@@ -431,7 +505,7 @@ int main(int argc, char** argv)
     std::vector<std::vector<double>> DataMatrix;
 
     //******************** load ROOT libraries ***************
-    setEnv();
+    setEnv(); // loading libRIO, libGEOM etc ROOT libraries
 
     //************************* check whether editing a file is required **************
     system("clear");
@@ -445,6 +519,7 @@ int main(int argc, char** argv)
     }
 
     if(choice == 1) {
+        /*
         std::cout << " PATH: ../../data/" << std::endl;
         system("ls -l ../../data");
         dataFileName = "";
@@ -452,12 +527,14 @@ int main(int argc, char** argv)
             std::cout << " Enter datafile name to be edited:-> ";
             std::cin >> dataFileName;
         }
+         */
     }
 
     //****************** Set the config file and data file Names **********
     fixfilename(argc, argv, configFileName, dataFileName, choice);
-    if(configFileName = "")
+    if(configFileName = "") {
         configFileName = "../../data/muonSim6133.tom";
+    }
 
     //******************* Read data Tree; ******************
     // myTree = getData(dataFileName, choice, );
@@ -482,10 +559,16 @@ int main(int argc, char** argv)
     //******************** Set Branches with variables ************
     muonTomoScope.genLeaves(myTree, numScintillator, NumDetectors, startModuleNum, offTDC, detChannelStart);
 
+    getStats(muonTomoScope, myTree->GetEntries(), trigMax, trigMin, trigMean, scintSensorNum, numScintillator, scintMin,
+             scintMax, scintMean, startModuleNum, offTDC, numDETabove + numDETbelow, detChannelStart, sigMin, sigMax,
+             sigMean);
+
     std::cout << " Total number of events : " << totEventNum << std::endl;
     std::cout << " Total valid data "
               << muonTomoScope.checkDataCount(totEventNum, NumDetectors, startModuleNum, offTDC, detChannelStart)
               << " \n Total valid Scintillator data " << muonTomoScope.checkScintCount(totEventNum, numScintillator)
+              << std::endl;
+    std::cout << "Signal Min = " << sigMin << "  signal Max = " << sigMax << "   signal Mean = " << sigMean
               << std::endl;
 
     // *********************** If ROOT file is edited do editing here ******************************
@@ -504,28 +587,34 @@ int main(int argc, char** argv)
         int totData = myTree->GetEntries();
 
         Hodoscope newTomoscope;
-        genNewData(choice, muonTomoScope, newTomoscope, totData, dataFileName, NumDetN, NumChanN, geo, enU, lenU, s1,
-                   s2, s3, s4, segN, delSegN, stripsN, delSN, detU, detD, delH0, delH1, oL, oW, oH, DobjDet, nTDC,
-                   nATDC, nScintU, nScintD, scintSN, scintNumN, totC, detC0, stripL, stripW, stripH, modu0, TDCoff,
-                   scintMean, trigMean, sigMean, scintMax, trigMax, sigMax, scintMin, trigMin, sigMin);
-
-        muonTomoScope.assignXYZ(choice, totData, NumDetN, modu0, TDCoff, detC0, scintMean, trigMean, sigMean, scintMax,
-                                trigMax, sigMax, scintMin, trigMin, sigMin, DataMatrix);
-    }
-    //********************* Assign X, Y, Z, Theta, Phi, T  for each data point ***********************
-    else {
-        muonTomoScope.assignXYZ(choice, totEventNum, NumDetectors, startModuleNum, offTDC, detChannelStart, scintMean,
-                                trigMean, sigMean, scintMax, trigMax, sigMax, scintMin, trigMin, sigMin, DataMatrix);
-    }
-
-    /*
-        for(std::vector<std::vector<double>>::iterator it1 = DataMatrix.begin(); it1 != DataMatrix.end(); ++it1) {
-            for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-                std::cout << *it2 << "  ";
-            }
-            std::cout << std::endl;
+        if(choice == 1) {
+            configFileName = "../../data/NEWmuonSim6147.tom";
         }
-    */
+
+        doConfig(choice, configFileName, geo, enU, lenU, s1, s2, s3, s4, segN, delSegN, stripsN, delSN, detU, detD,
+                 delH0, delH1, oL, oW, oH, DobjDet, nTDC, nATDC);
+
+        NumDetN = detU + detD;
+        NumChanN = segN * stripsN;
+
+        // xx = (i1 < numDetUP) ? i1 * det2detGap : topbotDetGap + (i1 - 1) * det2detGap;
+
+        muonTomoScope.assignXYZ(choice, totData, NumDetectors, NumDetN, NumChanN, modu0, TDCoff, detC0, sigMean, sigMax,
+                                sigMin, delH1, delH0, detU, DataMatrix);
+    }
+    //********************* Assign #evt   #Ch   X   Y   Z    Time  for each data point ***********************
+    else {
+        muonTomoScope.assignXYZ(choice, totEventNum, NumDetectors, NumDetectors, NumChannels, startModuleNum, offTDC,
+                                detChannelStart, sigMean, sigMax, sigMin, delDETht1, delDETht0, numDETabove,
+                                DataMatrix);
+    }
+
+    for(std::vector<std::vector<double>>::iterator it1 = DataMatrix.begin(); it1 != DataMatrix.end(); ++it1) {
+        for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+            std::cout << *it2 << "  ";
+        }
+        std::cout << std::endl;
+    }
 
     //********************** Assign Muon to each point and find tracks
     //***********************************************

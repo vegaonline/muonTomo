@@ -105,21 +105,16 @@ void getData(TString fileName, TTree*& tree1)
 
 void fixfilename(int argc, char** argv, TString& configFileName, TString& dataFileName, int choice)
 {
-    if(choice == 1) {
-        configFileName = argv[1];
-    }
-    else {
-        if(argc) {
-            if(argc < 3) {
-                exit(0);
-            }
-            else {
-                configFileName = argv[1];
-                dataFileName = argv[2];
-            }
-        }
-        else {
+    if(argc) {
+        if(argc < 3) {
             exit(0);
         }
+        else {
+            configFileName = argv[1];
+            dataFileName = argv[2];
+        }
+    }
+    else {
+        exit(0);
     }
 }
