@@ -249,6 +249,16 @@ void Hodoscope::assignXYZ(int choice,
             }
         }
     }
+
+    sort(dataMatrix.begin(), dataMatrix.end(), sort2Col); // sorting the matrix for Z
+    // sort(dataMatrix.begin(), dataMatrix.end(), sortFuncT); // sorting the matrix for T
+
+    for(std::vector<std::vector<double>>::iterator it1 = dataMatrix.begin(); it1 != dataMatrix.end(); ++it1) {
+        for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+            std::cout << *it2 << "  ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 //************************* Check Data **********************

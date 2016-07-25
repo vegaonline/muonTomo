@@ -84,6 +84,26 @@ void strcpVega(std::string& s1, std::string s2)
         s1.push_back(s2[i]);
 }
 
+bool sort2Col(const std::vector<double>& p1, const std::vector<double>& p2)
+{
+    if(p1[5] == p2[5]) {
+        return p1[6] < p2[6];
+    }
+    else {
+        return p1[5] > p2[5];
+    }
+}
+
+bool sortFuncZ(const std::vector<double>& p1, const std::vector<double>& p2)
+{
+    return p1[5] > p2[5];
+}
+
+bool sortFuncT(const std::vector<double>& p1, const std::vector<double>& p2)
+{
+    return p1[6] < p2[6]; // Ascending
+}
+
 void getData(TString fileName, TTree*& tree1)
 {
     TFile* file;

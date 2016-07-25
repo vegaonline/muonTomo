@@ -18,6 +18,17 @@ class voxel {
 };
 typedef std::vector<voxel> VoxelList;
 
+class muonData {
+  public:
+    int eventID;
+    unsigned int detNum;
+    unsigned int chanNum;
+    double x;
+    double y;
+    double z;
+    unsigned int time;
+};
+
 class muon {
   public:
     std::string eventID;

@@ -503,6 +503,7 @@ int main(int argc, char** argv)
 
     // std::vector<std::vector<std::vector<std::vector<double>>>> DataMatrix;
     std::vector<std::vector<double>> DataMatrix;
+    // std::vector<muonData> observedData;
 
     //******************** load ROOT libraries ***************
     setEnv(); // loading libRIO, libGEOM etc ROOT libraries
@@ -571,6 +572,8 @@ int main(int argc, char** argv)
     std::cout << "Signal Min = " << sigMin << "  signal Max = " << sigMax << "   signal Mean = " << sigMean
               << std::endl;
 
+    muonData* observedData; // [myTree->GetEntries()];
+
     // *********************** If ROOT file is edited do editing here ******************************
     if(choice == 1) {
         int NumDetN = 0;
@@ -607,13 +610,6 @@ int main(int argc, char** argv)
         muonTomoScope.assignXYZ(choice, totEventNum, NumDetectors, NumDetectors, NumChannels, startModuleNum, offTDC,
                                 detChannelStart, sigMean, sigMax, sigMin, delDETht1, delDETht0, numDETabove,
                                 DataMatrix);
-    }
-
-    for(std::vector<std::vector<double>>::iterator it1 = DataMatrix.begin(); it1 != DataMatrix.end(); ++it1) {
-        for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-            std::cout << *it2 << "  ";
-        }
-        std::cout << std::endl;
     }
 
     //********************** Assign Muon to each point and find tracks
