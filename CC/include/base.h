@@ -37,6 +37,7 @@
 
 #define x2(x) (x * x)
 #define x3(x) (x2 * x)
+#define sq(x) (exp(0.5 * log(x)))
 
 std::random_device rd;
 unsigned seedRD = std::chrono::system_clock::now().time_since_epoch().count();
@@ -45,15 +46,34 @@ std::mt19937_64 e2(seedRD);
 class TFile;
 class TGeoVolume;
 
-class point3D {
+class Vector {
   public:
     double x, y, z;
+
+    void get(int, int, int);
+    void get(double, double, double);
+    Vector operator+(const Vector&);
+    Vector operator-(const Vector&);
+    Vector operator*(const int&);
+    Vector operator*(const double&);
+};
+
+class point3D {
+  public:
+    double px, py, pz;
+    void get(double, double, double);
+    void get(int, int, int);
+    point3D operator+(const point3D&);
+    point3D operator+(const Vector&);
+    point3D operator-(const point3D&);
+    point3D operator-(const Vector&);
 };
 
 class line3D {
   public:
-    point3D P1, P2;
-    double len2 = x2(P2.x - P1.x) + x2(P2.y - P1.y) + x2(P2.z - P1.z);
+    point3D P0;
+    point3D P1;
+    double len2 = x2(P1.px - P0.px) + x2(P1.py - P0.py) + x2(P1.pz - P0.pz);
 };
 
 TString blow = "b_";
@@ -86,22 +106,19 @@ void strcpVega(std::string& s1, std::string s2)
 
 bool sort2Col(const std::vector<double>& p1, const std::vector<double>& p2)
 {
-    if(p1[5] == p2[5]) {
-        return p1[6] < p2[6];
+    if(p1[6] == p2[6]) {
+        return p1[7] < p2[7];
     }
     else {
-        return p1[5] > p2[5];
+        return p1[6] > p2[6];
     }
 }
 
-bool sortFuncZ(const std::vector<double>& p1, const std::vector<double>& p2)
+void writeVector2File(std::vector<std::vector<double>> vec, std::string myfile)
 {
-    return p1[5] > p2[5];
-}
-
-bool sortFuncT(const std::vector<double>& p1, const std::vector<double>& p2)
-{
-    return p1[6] < p2[6]; // Ascending
+    FILE* pfile;
+    std::string out_file = myfile;
+    pfile = fopen(out_file, "wb");
 }
 
 void getData(TString fileName, TTree*& tree1)

@@ -612,8 +612,22 @@ int main(int argc, char** argv)
                                 DataMatrix);
     }
 
+    FILE* fileXYZT;
+    fileXYZT = fopen("xyzt_sorted.dat", "wb");
+
+    for(std::vector<std::vector<double>>::iterator it1 = DataMatrix.begin(); it1 != DataMatrix.end(); ++it1) {
+        for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+            // std::cout << *it2 << "  ";
+            fwrite(*it2, sizeof(double) * sizeof(it2), sizeof(*it2), fileXYZT);
+        }
+        // std::cout << std::endl;
+    }
+
+    fclose(fileXYZT);
+
     //********************** Assign Muon to each point and find tracks
     //***********************************************
+
     muonGroup muons;
     muons.resize(DataMatrix.size());
     muonTomoScope.get_tracks(DataMatrix, NumDetectors, muons);

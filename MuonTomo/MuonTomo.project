@@ -25,6 +25,7 @@
     <File Name="../CC/include/hodoscope.h"/>
     <File Name="../CC/include/muon.h"/>
     <File Name="../CC/include/sensor.h"/>
+    <File Name="../CC/include/geometryOP.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

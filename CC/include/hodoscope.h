@@ -182,10 +182,11 @@ void Hodoscope::assignXYZ(int choice,
             for(int i1 = 0; i1 < NumDetNew; i1++) {
                 int idet = startModuleNum + offTDC + i1;
                 iflag = (idet > icheck) ? 1 : 0;
-                if(!idet) {
+                if(!iflag) {
                     for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
                         if(detectorArray[idet].stripLine[j].sensorVal->size()) {
                             dataMatrix.push_back(std::vector<double>());
+                            dataMatrix[cnt].push_back(cnt);
                             dataMatrix[cnt].push_back(evt);
                             dataMatrix[cnt].push_back(idet);
                             dataMatrix[cnt].push_back(j);
@@ -204,6 +205,7 @@ void Hodoscope::assignXYZ(int choice,
                 else {
                     for(int j = detChannelStart; j < detChannelStart + nChan; j++) { // detEleNumX change
                         dataMatrix.push_back(std::vector<double>());
+                        dataMatrix[cnt].push_back(cnt);
                         dataMatrix[cnt].push_back(evt);
                         dataMatrix[cnt].push_back(idet);
                         dataMatrix[cnt].push_back(j);
@@ -231,6 +233,7 @@ void Hodoscope::assignXYZ(int choice,
                 for(int j = detChannelStart; j < (detChannelStart + detEleNumX); j++) {
                     if(detectorArray[idet].stripLine[j].sensorVal->size()) {
                         dataMatrix.push_back(std::vector<double>());
+                        dataMatrix[cnt].push_back(cnt);
                         dataMatrix[cnt].push_back(evt);
                         dataMatrix[cnt].push_back(idet);
                         dataMatrix[cnt].push_back(j);
@@ -252,13 +255,6 @@ void Hodoscope::assignXYZ(int choice,
 
     sort(dataMatrix.begin(), dataMatrix.end(), sort2Col); // sorting the matrix for Z
     // sort(dataMatrix.begin(), dataMatrix.end(), sortFuncT); // sorting the matrix for T
-
-    for(std::vector<std::vector<double>>::iterator it1 = dataMatrix.begin(); it1 != dataMatrix.end(); ++it1) {
-        for(std::vector<double>::iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-            std::cout << *it2 << "  ";
-        }
-        std::cout << std::endl;
-    }
 }
 
 //************************* Check Data **********************
